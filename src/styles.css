@@ -1,0 +1,149 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #eaeaea;
+}
+
+/* Map: always in DOM so the assistant can reference it.
+   When hidden, push offscreen (display:none would prevent the view from loading). */
+#main-map {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#main-map.map-hidden {
+  position: fixed;
+  left: -200vw;
+  width: 1024px;
+  height: 768px;
+  overflow: hidden;
+}
+
+#main-map.map-visible {
+  position: fixed;
+  inset: 0;
+}
+
+
+/* Voice UI: centered, accessible */
+#voice-ui {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  gap: 2rem;
+}
+
+#app-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+#status {
+  font-size: 1.2rem;
+  color: #b0b0b0;
+  max-width: 400px;
+  min-height: 3rem;
+}
+
+/* Mic button: large, prominent, accessible */
+#mic-btn {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #4a90d9;
+  background: #2a2a4a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+#mic-btn svg {
+  fill: #4a90d9;
+  transition: fill 0.2s;
+}
+
+#mic-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#mic-btn:hover:not(:disabled),
+#mic-btn:focus-visible {
+  background: #3a3a5a;
+  box-shadow: 0 0 0 4px rgba(74, 144, 217, 0.3);
+  outline: none;
+}
+
+#mic-btn:active:not(:disabled),
+#mic-btn.listening {
+  background: #d94a4a;
+  border-color: #d94a4a;
+  transform: scale(1.05);
+}
+
+#mic-btn.listening svg {
+  fill: #fff;
+}
+
+/* Toggle map button: only visible in edit mode */
+#toggle-map-btn {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: #2a2a4a;
+  color: #eaeaea;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#toggle-map-btn:hover,
+#toggle-map-btn:focus-visible {
+  background: #3a3a5a;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.3);
+}
+
+/* When map is shown, voice UI becomes a compact floating panel */
+body.map-active #voice-ui {
+  background: rgba(26, 26, 46, 0.85);
+  border-radius: 16px;
+  min-height: auto;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1.5rem 2.5rem;
+  gap: 1rem;
+}
+
+body.map-active #app-title {
+  font-size: 1.2rem;
+}
+
+body.map-active #mic-btn {
+  width: 80px;
+  height: 80px;
+}
+
+body.map-active #mic-btn svg {
+  width: 32px;
+  height: 32px;
+}

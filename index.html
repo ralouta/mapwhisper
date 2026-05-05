@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GeoVoice Assistant</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <!-- Map: hidden by default, used for screenshot capture only -->
+  <arcgis-map id="main-map" basemap="streets-navigation-vector" class="map-hidden">
+    <arcgis-zoom position="bottom-left"></arcgis-zoom>
+  </arcgis-map>
+
+  <!-- Voice UI: the only thing the user interacts with -->
+  <div id="voice-ui" role="main" aria-label="Voice assistant for geographic descriptions">
+    <h1 id="app-title">GeoVoice Assistant</h1>
+    <p id="status" aria-live="polite" aria-atomic="true">Press the button and ask about a location.</p>
+    <button
+      id="mic-btn"
+      type="button"
+      aria-label="Hold to speak"
+      title="Hold to speak"
+    >
+      <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+        <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
+        <path d="M19 11a7 7 0 0 1-14 0H3a9 9 0 0 0 8 8.94V22h2v-2.06A9 9 0 0 0 21 11h-2z"/>
+      </svg>
+    </button>
+    <button id="toggle-map-btn" type="button" aria-label="Show map" hidden>
+      Show Map
+    </button>
+
+    <!-- Language picker: only visible in ?mode=edit -->
+    <div id="lang-settings" hidden>
+      <label for="lang-select">Speech &amp; response language:</label>
+      <select id="lang-select" aria-label="Select language">
+        <option value="en-US">English (US)</option>
+        <option value="ar-SA">Arabic</option>
+        <option value="zh-CN">Chinese (Simplified)</option>
+        <option value="fr-FR">French</option>
+        <option value="de-DE">German</option>
+        <option value="hi-IN">Hindi</option>
+        <option value="it-IT">Italian</option>
+        <option value="ja-JP">Japanese</option>
+        <option value="ko-KR">Korean</option>
+        <option value="pt-BR">Portuguese (Brazil)</option>
+        <option value="ru-RU">Russian</option>
+        <option value="es-ES">Spanish</option>
+        <option value="sv-SE">Swedish</option>
+        <option value="tr-TR">Turkish</option>
+      </select>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
