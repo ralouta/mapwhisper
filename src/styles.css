@@ -147,3 +147,145 @@ body.map-active #mic-btn svg {
   width: 32px;
   height: 32px;
 }
+
+/* Better touch behavior on mobile/touch devices */
+#mic-btn,
+#toggle-map-btn,
+#lang-select {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Phone and large-phone responsive layout */
+@media (max-width: 768px) {
+  #voice-ui {
+    min-height: 100dvh;
+    padding-top: calc(1rem + env(safe-area-inset-top));
+    padding-right: calc(1rem + env(safe-area-inset-right));
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    padding-left: calc(1rem + env(safe-area-inset-left));
+    gap: 1.25rem;
+  }
+
+  #app-title {
+    font-size: 1.5rem;
+  }
+
+  #status {
+    font-size: 1rem;
+    line-height: 1.4;
+    max-width: min(100%, 34ch);
+    min-height: 2.8rem;
+  }
+
+  #mic-btn {
+    width: 108px;
+    height: 108px;
+  }
+
+  #mic-btn svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  #toggle-map-btn,
+  #lang-select {
+    min-height: 44px;
+    font-size: 1rem;
+  }
+
+  #toggle-map-btn {
+    padding: 0.65rem 1rem;
+  }
+
+  #lang-settings {
+    width: min(100%, 28rem);
+    display: grid;
+    gap: 0.5rem;
+    text-align: left;
+  }
+
+  #lang-label {
+    font-size: 0.95rem;
+  }
+
+  #lang-select {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: #2a2a4a;
+    color: #eaeaea;
+  }
+
+  /* In map-active mode, dock panel safely and prevent clipping near notch/home indicator */
+  body.map-active #voice-ui {
+    left: calc(0.75rem + env(safe-area-inset-left));
+    right: calc(0.75rem + env(safe-area-inset-right));
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    transform: none;
+    min-height: auto;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    max-height: min(56dvh, 420px);
+    overflow-y: auto;
+    gap: 0.85rem;
+  }
+
+  body.map-active #app-title {
+    font-size: 1rem;
+  }
+
+  body.map-active #status {
+    font-size: 0.95rem;
+    max-width: 100%;
+    min-height: 0;
+  }
+
+  body.map-active #mic-btn {
+    width: 72px;
+    height: 72px;
+  }
+
+  body.map-active #mic-btn svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 400px) {
+  #voice-ui {
+    gap: 1rem;
+  }
+
+  #app-title {
+    font-size: 1.35rem;
+  }
+
+  #status {
+    font-size: 0.95rem;
+  }
+
+  #mic-btn {
+    width: 96px;
+    height: 96px;
+  }
+
+  #mic-btn svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Short viewport (landscape phones) */
+@media (max-width: 768px) and (max-height: 500px) {
+  #voice-ui {
+    justify-content: flex-start;
+    padding-top: calc(0.75rem + env(safe-area-inset-top));
+    gap: 0.8rem;
+  }
+
+  #status {
+    min-height: 0;
+  }
+}
