@@ -1,4 +1,4 @@
-# GeoAccesser
+# MapWhisper
 
 A voice-first web app for blind and low-vision users to query geographic locations hands-free using ArcGIS AI services.
 
@@ -10,6 +10,19 @@ Press the mic button, ask a question — "What is around me?" or "Describe Museu
 2. Web Speech API transcribes the voice to text
 3. The app geocodes any named location, captures a map screenshot, and analyzes it via ArcGIS AI
 4. The description is translated (if needed) and spoken aloud via Speech Synthesis
+
+## Architecture
+
+The app is split into focused modules:
+
+| Module | Responsibility |
+|---|---|
+| `src/config.ts` | Environment variables and constants |
+| `src/services.ts` | ArcGIS REST API calls (translate, geocode, image analyze) |
+| `src/i18n.ts` | UI message catalog and dynamic translation |
+| `src/speak.ts` | Chrome-hardened speech synthesis with queue |
+| `src/recognition.ts` | Web Speech API recognition setup |
+| `src/main.ts` | Thin orchestrator — wires all modules together |
 
 ## Setup
 
@@ -36,7 +49,7 @@ npm run dev
 
 Go to `http://localhost:5173/?mode=edit` to open the language selector. Pick the speech and response language — it is saved locally and persists across sessions.
 
-Supported languages: Arabic, Chinese, English, French, German, Hindi, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Swedish, Turkish.
+Supported languages: Arabic, Chinese (Simplified), Dutch, English, French, German, Hindi, Italian, Japanese, Korean, Portuguese (Brazil), Russian, Spanish, Swedish, Turkish.
 
 ## Build
 
