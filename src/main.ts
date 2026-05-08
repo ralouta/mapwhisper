@@ -8,7 +8,7 @@ const OAUTH_APP_ID = import.meta.env.VITE_OAUTH_APP_ID;
 const PORTAL_URL = import.meta.env.VITE_PORTAL_URL || "https://www.arcgis.com";
 const GEOCODE_URL =
   "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates";
-const APP_TITLE = import.meta.env.VITE_APP_TITLE || "GeoVoice Assistant";
+const APP_TITLE = import.meta.env.VITE_APP_TITLE || "MapWhisper";
 const urlParams = new URLSearchParams(window.location.search);
 const FIXED_SPEECH_LANG = urlParams.get("speechLang");
 // Language: prefer ?speechLang param, then localStorage setting, then browser default.
