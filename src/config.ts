@@ -4,4 +4,4 @@ export const PORTAL_URL =
 export const GEOCODE_URL =
   "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates";
 export const APP_TITLE =
-  (import.meta.env.VITE_APP_TITLE as string) || "GeoVoice Assistant";
+  (import.meta.env.VITE_APP_TITLE as string) || "MapWhisper";
