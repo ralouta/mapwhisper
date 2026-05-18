@@ -1,6 +1,7 @@
 import "@arcgis/map-components/components/arcgis-map";
 import "@arcgis/map-components/components/arcgis-zoom";
 import type MapView from "@arcgis/core/views/MapView";
+import { t } from "./i18n";
 
 // == Config ==
 
@@ -73,6 +74,48 @@ const isEditMode = urlParams.get("mode") === "edit";
 
 const langSettingsEl = document.getElementById("lang-settings") as HTMLDivElement;
 const langSelectEl = document.getElementById("lang-select") as HTMLSelectElement;
+const basemapSelectEl = document.getElementById("basemap-select") as HTMLSelectElement;
+const basemapLabelEl = document.getElementById("basemap-label") as HTMLLabelElement;
+
+// == Basemap Aliases ==
+
+const BASEMAP_ALIASES: Record<string, string> = {
+  streets: "streets-navigation-vector",
+  "streets navigation": "streets-navigation-vector",
+  navigation: "streets-navigation-vector",
+  satellite: "satellite",
+  imagery: "satellite",
+  hybrid: "hybrid",
+  "satellite with labels": "hybrid",
+  topo: "topo-vector",
+  topographic: "topo-vector",
+  "dark gray": "dark-gray-vector",
+  "dark grey": "dark-gray-vector",
+  dark: "dark-gray-vector",
+  "light gray": "gray-vector",
+  "light grey": "gray-vector",
+  gray: "gray-vector",
+  grey: "gray-vector",
+  "streets night": "streets-night-vector",
+  night: "streets-night-vector",
+  oceans: "oceans",
+  ocean: "oceans",
+  osm: "osm",
+  openstreetmap: "osm",
+  "open street map": "osm",
+};
+
+const BASEMAP_DISPLAY_NAMES: Record<string, string> = {
+  "streets-navigation-vector": "Streets Navigation",
+  satellite: "Satellite",
+  hybrid: "Satellite with Labels",
+  "topo-vector": "Topographic",
+  "dark-gray-vector": "Dark Gray",
+  "gray-vector": "Light Gray",
+  "streets-night-vector": "Streets Night",
+  oceans: "Oceans",
+  osm: "OpenStreetMap",
+};
 
 if (isEditMode) {
   toggleMapBtn.hidden = false;
@@ -91,6 +134,17 @@ if (isEditMode) {
     setActiveSpeechLang(chosen);
     setStatus("Language set to: " + (langSelectEl.selectedOptions[0]?.text || chosen));
   });
+
+  // Basemap select wiring
+  if (basemapLabelEl) basemapLabelEl.textContent = t("basemapLabel");
+  if (basemapSelectEl) {
+    basemapSelectEl.setAttribute("aria-label", t("basemapSelectAria"));
+    basemapSelectEl.addEventListener("change", () => {
+      applyBasemap(basemapSelectEl.value);
+      const displayName = basemapSelectEl.selectedOptions[0]?.text || basemapSelectEl.value;
+      setStatus(t("statusBasemapChanged", { basemap: displayName }));
+    });
+  }
 }
 
 function toggleMap() {
@@ -207,6 +261,7 @@ interface ParsedIntent {
   targetLocation: string | null;
   question: string;
   responseLanguage: string | null;
+  basemapCommand: string | null;
 }
 
 const LANGUAGE_MAP: Record<string, string> = {
@@ -251,6 +306,26 @@ function parseIntent(transcript: string): ParsedIntent {
   const lower = transcript.toLowerCase();
   let responseLanguage: string | null = null;
 
+  // Detect basemap command
+  const basemapMatch = lower.match(
+    /(?:change|switch|set|use|show)\s+(?:the\s+)?(?:basemap|map)\s+(?:to\s+)?(.+)/,
+  ) || lower.match(
+    /(?:switch|change)\s+to\s+(.+?)\s*(?:basemap|map)?\s*$/,
+  ) || lower.match(
+    /use\s+(.+?)\s+(?:basemap|map)/,
+  );
+
+  if (basemapMatch) {
+    const requested = basemapMatch[1].trim().replace(/\s+map$/, "").replace(/\s+basemap$/, "");
+    const basemapId = BASEMAP_ALIASES[requested] || null;
+    return {
+      targetLocation: null,
+      question: transcript,
+      responseLanguage: null,
+      basemapCommand: basemapId ?? "__not_found__:" + requested,
+    };
+  }
+
   // Detect language request: "in <language>" at the end
   const langMatch = lower.match(
     /(?:in|reply in|respond in|answer in|speak in|say it in|tell me in)\s+(\w+)\s*$/,
@@ -294,7 +369,7 @@ function parseIntent(transcript: string): ParsedIntent {
     }
   }
 
-  return { targetLocation, question: transcript, responseLanguage };
+  return { targetLocation, question: transcript, responseLanguage, basemapCommand: null };
 }
 
 // == AI Service Discovery ==
@@ -419,6 +494,11 @@ async function translateText(
 
 // == Handle User Question ==
 
+function applyBasemap(basemapId: string): void {
+  mapEl.setAttribute("basemap", basemapId);
+  if (basemapSelectEl) basemapSelectEl.value = basemapId;
+}
+
 async function handleUserQuestion(question: string) {
   if (isProcessing) return;
   isProcessing = true;
@@ -434,6 +514,23 @@ async function handleUserQuestion(question: string) {
     }
 
     let intent = parseIntent(questionForIntent);
+
+    // Handle basemap command early
+    if (intent.basemapCommand) {
+      if (intent.basemapCommand.startsWith("__not_found__:")) {
+        const msg = t("statusBasemapNotFound");
+        setStatus(msg);
+        speakText(msg);
+      } else {
+        applyBasemap(intent.basemapCommand);
+        const displayName = BASEMAP_DISPLAY_NAMES[intent.basemapCommand] || intent.basemapCommand;
+        const msg = t("statusBasemapChanged", { basemap: displayName });
+        setStatus(msg);
+        speakText(msg);
+      }
+      return;
+    }
+
     if (!intent.responseLanguage) {
       intent = { ...intent, responseLanguage: speechCulture };
     }
